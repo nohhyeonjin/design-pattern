@@ -8,14 +8,51 @@
 <br>
 주제의 상태값을 확인하는 객체가 추가될 때 마다
 주제의 구현 또한 계속 추가/삭제 되어야함
-<br>
-<br>
+```java
+public class WeatherData {
+    public void changed(){
+        float humidity = getHumidity();
+        
+        aDisplay.update(humidity);
+        bDisplay.update(humidity);
+        // ... 객체 추가마다 변경이 이루어짐
+    }
+}
+```
 ### Observer Case
 주제에서 옵저버 인터페이스를 통해 상태값 통신
 <br>
 주제 구현체는 옵저버들을 가지며, 주제의 변경 시 옵저버들의 업데이트 함수를 호출하는 형태
 <br>
-<br>
+``` java
+public class WeatherData implements Subject {
+    private List<Observer> observers;
+    private float humidity;
+    
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+    
+    public void notifyObservers(){
+        for(Observer observer:observers){
+            observer.update(humidity);
+        }
+    }
+}
+```
+``` java
+public class aDisplay implements Observer {
+    private float humidity;
+    private WeatherData weatherData;
+    
+    public aDisplay(WeatherData weatherData){
+        this.weatherData = weatherData;
+        weatherData.registerObserver(this);
+    }
+    
+    public void update(float humidity) {...}
+}
+```
 ### IF
 <b>하나의 옵저버가 여러 주제의 상태 값을 요구한다면?</b>
 ```java
